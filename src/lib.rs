@@ -7,6 +7,11 @@ fn hello_mytest() -> &'static str {
     "Hello, mytest"
 }
 
+#[pg_extern]
+fn hello_mytest2() -> &'static str {
+    "Hello, mytest!!"
+}
+
 #[cfg(any(test, feature = "pg_test"))]
 #[pg_schema]
 mod tests {
