@@ -4,6 +4,7 @@
   "features": {
       "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
         "packages": "libclang-dev,build-essential,libreadline-dev,zlib1g-dev,flex,bison,libxml2-dev,libxslt-dev,libssl-dev,libxml2-utils,xsltproc,ccache,pkg-config"
-      }
+      },
+      "ghcr.io/itsmechlark/features/postgresql:1": {}
   }
 }
