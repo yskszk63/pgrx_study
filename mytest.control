@@ -1,0 +1,6 @@
+comment = 'mytest:  Created by pgrx'
+default_version = '@CARGO_VERSION@'
+module_pathname = 'mytest'
+relocatable = false
+superuser = true
+trusted = false

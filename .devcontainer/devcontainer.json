@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainer.base.schema.json",
+  "image": "mcr.microsoft.com/devcontainers/rust",
+  "features": {
+      "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
+        "packages": "libclang-dev,build-essential,libreadline-dev,zlib1g-dev,flex,bison,libxml2-dev,libxslt-dev,libssl-dev,libxml2-utils,xsltproc,ccache,pkg-config"
+      }
+  }
+}
