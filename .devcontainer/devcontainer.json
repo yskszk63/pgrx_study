@@ -2,12 +2,16 @@
   "$schema": "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainer.base.schema.json",
   "image": "mcr.microsoft.com/devcontainers/rust",
   "features": {
-      "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
-        "packages": "libclang-dev,build-essential,libreadline-dev,zlib1g-dev,flex,bison,libxml2-dev,libxslt-dev,libssl-dev,libxml2-utils,xsltproc,ccache,pkg-config"
-      },
-      "ghcr.io/itsmechlark/features/postgresql:1": {}
+    "ghcr.io/yskszk63/features/pgrx:0.1.2": "0.16.1"
   },
-  "postCreateCommand": {
-    "pgrx": ["cargo", "install", "--locked", "cargo-pgrx"]
+  "mounts": [
+    {
+      "type": "volume",
+      "target": "/home/vscode/.pgrx/",
+      "source": "pgpd-study-pgrx-home"
+    }
+  ],
+  "onCreateCommand": {
+    "chown": ["sudo", "chown", "vscode:vscode", "/home/vscode/.pgrx/"]
   }
 }
