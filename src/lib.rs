@@ -1,31 +1,69 @@
 use pgrx::PgSqlErrorCode;
 use pgrx::pg_sys::panic::ErrorReport;
 use supabase_wrappers::prelude::*;
+use reqwest::blocking::Client;
+use serde::Deserialize;
+use thiserror::Error;
 
 ::pgrx::pg_module_magic!(name, version);
+
+#[derive(Deserialize, Debug)]
+pub struct Item {
+    pub path: String,
+    pub mode: String,
+    pub r#type: String,
+    pub sha: String,
+    pub size: Option<u64>,
+    pub url: String,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Response {
+    pub sha: String,
+    pub url: String,
+    pub tree: Vec<Item>,
+    pub truncated: bool,
+}
 
 #[wrappers_fdw(
     version = "0.1.0",
     author = "me",
-    error_type = "MyTestError",
+    error_type = "GithubError",
 )]
-struct MyTest {}
+struct Github {
+    response: Option<Box<dyn Iterator<Item=Item>>>,
+}
 
-enum MyTestError {}
+#[derive(Error, Debug)]
+enum GithubError {
+    #[error("Failed to fetch {0:}")]
+    FailedToFetch(#[from] reqwest::Error),
 
-impl From<MyTestError> for ErrorReport {
-    fn from(_value: MyTestError) -> Self {
-        ErrorReport::new(PgSqlErrorCode::ERRCODE_FDW_ERROR, "", "")
+    #[error("Missing options: repo")]
+    MissingOpts,
+
+    #[error("Request failure {0:}")]
+    RequestFailure(u16),
+
+    #[error("Failed to deserialize {0:}")]
+    Deserialize(#[from] serde_json::Error),
+}
+
+impl From<GithubError> for ErrorReport {
+    fn from(value: GithubError) -> Self {
+        ErrorReport::new(PgSqlErrorCode::ERRCODE_FDW_ERROR, value.to_string(), "github")
     }
 }
 
-type MyTestResult<T> = Result<T, MyTestError>;
+type Result<T> = std::result::Result<T, GithubError>;
 
-impl ForeignDataWrapper<MyTestError> for MyTest {
-    fn new(_server: ForeignServer) -> Result<Self, MyTestError>
-    where
-        Self: Sized {
-        todo!()
+impl ForeignDataWrapper<GithubError> for Github {
+    fn new(_server: ForeignServer) -> Result<Self>
+    where Self: Sized {
+        //report_info("Hello, World!");
+        Ok(Github{
+            response: None,
+        })
     }
 
     fn begin_scan(
@@ -34,16 +72,46 @@ impl ForeignDataWrapper<MyTestError> for MyTest {
         _columns: &[Column],
         _sorts: &[Sort],
         _limit: &Option<Limit>,
-        _options: &std::collections::HashMap<String, String>,
-    ) -> Result<(), MyTestError> {
-        todo!()
+        options: &std::collections::HashMap<String, String>,
+    ) -> Result<()> {
+        let repo = options.get("repo");
+        let repo = if let Some(repo) = repo {
+            repo
+        } else {
+            return Err(GithubError::MissingOpts);
+        };
+        let client = Client::builder().user_agent("My-APP").build()?;
+
+        let res = client
+            .get(format!("https://api.github.com/repos/{}/git/trees/main?recursive=1", repo))
+            .send()?;
+        if !res.status().is_success() {
+            let status = res.status().as_u16();
+            report_warning(&res.text()?);
+            return Err(GithubError::RequestFailure(status));
+        }
+
+        let res = serde_json::from_reader::<_, Response>(res)?;
+        self.response = Some(Box::new(res.tree.into_iter()));
+
+        Ok(())
     }
 
-    fn iter_scan(&mut self, _row: &mut Row) -> Result<Option<()>, MyTestError> {
-        todo!()
+    fn iter_scan(&mut self, row: &mut Row) -> Result<Option<()>> {
+        let Some(ref mut iter) = self.response else {
+            return Ok(None);
+        };
+
+        let Some (item) = &iter.next() else {
+            return Ok(None);
+        };
+
+        row.push("path", Some(Cell::String(item.path.to_string())));
+
+        Ok(Some(()))
     }
 
-    fn end_scan(&mut self) -> Result<(), MyTestError> {
-        todo!()
+    fn end_scan(&mut self) -> Result<()> {
+        Ok(())
     }
 }

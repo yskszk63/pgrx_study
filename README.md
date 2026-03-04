@@ -16,30 +16,31 @@ mytest=#
 
 ### Example SQL
 
-at f071e21ccce3ab2dfa2a649c00c8666a1c907c94
-
 ```sql
+drop extension mytest cascade;
+
 -- create extension
 create extension mytest;
 
--- create foreign data wrapper and enable 'HelloWorldFdw'
-create foreign data wrapper mytest_wrapper
-  handler my_test_handler
-  validator my_test_validator;
+create foreign data wrapper github_wrapper
+  handler github_handler
+  validator github_validator;
 
 -- create server and specify custom options
-create server mytest_server
-  foreign data wrapper mytest_wrapper;
+create server github_server
+  foreign data wrapper github_wrapper;
 
 -- create an example foreign table
-create foreign table hello (
-  id bigint,
-  col text
+create foreign table yskszk63_dotfiles (
+  path text
 )
-  server mytest_server;
+server github_server
+options(repo 'yskszk63/dotfiles');
 ```
 
 ```
-mytest=# select * from hello;
-ERROR:  not yet implemented
+mytest=# select path from yskszk63_dotfiles;
+    path
+----------------
+...
 ```
