@@ -6,12 +6,9 @@
   },
   "mounts": [
     {
-      "type": "volume",
+      "type": "bind",
       "target": "/home/vscode/.pgrx/",
-      "source": "pgpd-study-pgrx-home"
+      "source": "${localWorkspaceFolder}/.pgrx"
     }
-  ],
-  "onCreateCommand": {
-    "chown": ["sudo", "chown", "vscode:vscode", "/home/vscode/.pgrx/"]
-  }
+  ]
 }
