@@ -100,7 +100,16 @@ impl ForeignDataWrapper<GithubError> for Github {
             return Ok(None);
         };
 
-        row.push("path", Some(Cell::String(item.path.to_string())));
+        row.push("path", Some(Cell::String(item.path.clone())));
+        row.push("mode", Some(Cell::String(item.mode.clone())));
+        row.push("type", Some(Cell::String(item.r#type.clone())));
+        row.push("sha", Some(Cell::String(item.sha.clone())));
+        if let Some(size) = item.size {
+            row.push("size", Some(Cell::I64(size as i64))); // TODO
+        } else {
+            row.push("size", None);
+        };
+        row.push("url", Some(Cell::String(item.url.clone())));
 
         Ok(Some(()))
     }

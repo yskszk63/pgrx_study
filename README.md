@@ -32,7 +32,12 @@ create server github_server
 
 -- create an example foreign table
 create foreign table yskszk63_dotfiles (
-  path text
+  path text,
+  mode text,
+  type text,
+  sha text,
+  size bigint,
+  url text
 )
 server github_server
 options(repo 'yskszk63/dotfiles');
