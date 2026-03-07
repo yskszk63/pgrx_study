@@ -61,7 +61,7 @@ impl ForeignDataWrapper<GithubError> for Github {
         Self: Sized,
     {
         //report_info("Hello, World!");
-        Ok(Github { response: None })
+        Ok(Self { response: None })
     }
 
     fn begin_scan(

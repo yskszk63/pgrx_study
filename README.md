@@ -60,20 +60,21 @@ drop extension if exists mytest cascade;
 -- create extension
 create extension mytest;
 
-create foreign data wrapper memory_wrapper
-  handler memory_handler
-  validator memory_validator;
+create foreign data wrapper dir_wrapper
+  handler dir_handler
+  validator dir_validator;
 
 -- create server and specify custom options
-create server memory_server
-  foreign data wrapper memory_wrapper;
+create server dir_server
+  foreign data wrapper dir_wrapper;
 
 -- create an example foreign table
-create foreign table mem (
+create foreign table dir (
   id text,
   data text
 )
-server memory_server;
+server dir_server
+options(dir './data');
 ```
 
 ```
