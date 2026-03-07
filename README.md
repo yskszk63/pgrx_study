@@ -17,7 +17,7 @@ mytest=#
 ### Example SQL
 
 ```sql
-drop extension mytest cascade;
+drop extension if exists mytest cascade;
 
 -- create extension
 create extension mytest;
