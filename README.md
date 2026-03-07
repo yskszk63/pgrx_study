@@ -16,6 +16,8 @@ mytest=#
 
 ### Example SQL
 
+#### GitHub
+
 ```sql
 drop extension if exists mytest cascade;
 
@@ -47,5 +49,35 @@ options(repo 'yskszk63/dotfiles');
 mytest=# select path from yskszk63_dotfiles;
     path
 ----------------
+...
+```
+
+#### GitHub
+
+```sql
+drop extension if exists mytest cascade;
+
+-- create extension
+create extension mytest;
+
+create foreign data wrapper memory_wrapper
+  handler memory_handler
+  validator memory_validator;
+
+-- create server and specify custom options
+create server memory_server
+  foreign data wrapper memory_wrapper;
+
+-- create an example foreign table
+create foreign table mem (
+  id text,
+  data text
+)
+server memory_server;
+```
+
+```
+mytest=# select * from mem;
+TODO
 ...
 ```
