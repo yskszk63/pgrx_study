@@ -20,6 +20,9 @@ enum DirError {
 
     #[error("{0}")]
     Io(#[from] io::Error),
+
+    #[error("Not implemented.")]
+    NotImplemented,
 }
 
 impl From<DirError> for ErrorReport {
@@ -89,6 +92,31 @@ impl ForeignDataWrapper<DirError> for Dir {
 
     fn end_scan(&mut self) -> Result<()> {
         self.cursor = None;
+        Ok(())
+    }
+
+    fn begin_modify(&mut self, _options: &std::collections::HashMap<String, String>) -> Result<()> {
+        report_notice("begin_modify");
+        Err(DirError::NotImplemented)
+    }
+
+    fn insert(&mut self, row: &Row) -> Result<()> {
+        report_notice(&format!("insert {:?}", row));
+        Err(DirError::NotImplemented)
+    }
+
+    fn update(&mut self, rowid: &Cell, new_row: &Row) -> Result<()> {
+        report_notice(&format!("update {:?} {:?}", rowid, new_row));
+        Err(DirError::NotImplemented)
+    }
+
+    fn delete(&mut self, rowid: &Cell) -> Result<()> {
+        report_notice(&format!("delete {:?}", rowid));
+        Err(DirError::NotImplemented)
+    }
+
+    fn end_modify(&mut self) -> Result<()> {
+        report_notice("end_modify");
         Ok(())
     }
 }

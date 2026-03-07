@@ -70,8 +70,8 @@ create server dir_server
 
 -- create an example foreign table
 create foreign table dir (
-  id text,
-  data text
+  path text,
+  mode text
 )
 server dir_server
 options(dir './data');
