@@ -78,7 +78,41 @@ options(rowid_column 'path', dir '/workspaces/pgrx_study/data');
 ```
 
 ```
-mytest=# select * from mem;
-TODO
-...
+mytest=# select path, mode from dir;
+ path | mode 
+------+------
+(0 rows)
+
+mytest=# insert into dir(path,mode) values ('example.txt', '644');
+INSERT 0 1
+mytest=# select path, mode from dir;
+    path     |  mode  
+-------------+--------
+ example.txt | 100644
+(1 row)
+
+mytest=# insert into dir(path,mode) values ('example2.txt', '644');
+INSERT 0 1
+mytest=# select path, mode from dir;
+     path     |  mode  
+--------------+--------
+ example.txt  | 100644
+ example2.txt | 100644
+(2 rows)
+
+mytest=# update dir set mode='600';
+UPDATE 2
+mytest=# select path, mode from dir;
+     path     |  mode  
+--------------+--------
+ example.txt  | 100600
+ example2.txt | 100600
+(2 rows)
+
+mytest=# delete from dir;
+DELETE 2
+mytest=# select path, mode from dir;
+ path | mode 
+------+------
+(0 rows)
 ```

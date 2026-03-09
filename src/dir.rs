@@ -225,7 +225,6 @@ impl ForeignDataWrapper<DirError> for Dir {
     }
 
     fn update(&mut self, rowid: &Cell, new_row: &Row) -> Result<()> {
-        report_info(&format!("{:?} {:?}", rowid, new_row));
         let Some(State::Update(Update { dir, .. })) = &self.state else {
             return Err(DirError::NoOption);
         };
