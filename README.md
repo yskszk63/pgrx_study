@@ -52,7 +52,7 @@ mytest=# select path from yskszk63_dotfiles;
 ...
 ```
 
-#### GitHub
+#### Dir
 
 ```sql
 drop extension if exists mytest cascade;
@@ -74,7 +74,7 @@ create foreign table dir (
   mode text
 )
 server dir_server
-options(dir './data');
+options(rowid_column 'path', dir '/workspaces/pgrx_study/data');
 ```
 
 ```
