@@ -1,5 +1,8 @@
 # My pgrx Studies
 
+本実装するときに使うであろう、 tupelspace とか、 xact_event とか、扱うには PostgreSQL の内部構造を
+知ってないとsかしくなると思う。知見が不足してる。
+
 ## Usage
 
 ### cargo pgrx run
@@ -115,4 +118,34 @@ mytest=# select path, mode from dir;
  path | mode 
 ------+------
 (0 rows)
+```
+
+#### TxDir
+
+```sql
+drop extension if exists mytest cascade;
+
+-- create extension
+create extension mytest;
+
+create foreign data wrapper tx_dir_wrapper
+  handler tx_dir_handler
+  validator tx_dir_validator;
+
+-- create server and specify custom options
+create server tx_dir_server
+  foreign data wrapper tx_dir_wrapper;
+
+-- create an example foreign table
+create foreign table tx_dir (
+  path text,
+  mode text
+)
+server tx_dir_server
+options(rowid_column 'path', dir '/workspaces/pgrx_study/data');
+```
+
+```
+mytest=# select path, mode from tx_dir;
+TODO
 ```
